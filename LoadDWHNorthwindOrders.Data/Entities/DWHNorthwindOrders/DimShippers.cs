@@ -8,9 +8,16 @@ namespace LoadDWHNorthwindOrders.Data.Entities.DWHNorthwindOrders
     public class DimShippers
     {
         [Key]
-        public int ShipperKey { get; set; } 
-        public int ShipperID { get; set; } 
-        public string? CompanyName { get; set; }
-        public string? Phone { get; set; }
+        public int ShipperKey { get; set; }
+
+        [Required]
+        public int ShipperID { get; set; }
+
+        [Required, MaxLength(40)]
+        public string CompanyName { get; set; }
+
+        [MaxLength(24)]
+        public string Phone { get; set; }
     }
+
 }

@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace LoadDWHNorthwindOrders.WorkerService
 {
-    public class Program
+    internal class Program
     {
         private static void Main(string[] args)
         {

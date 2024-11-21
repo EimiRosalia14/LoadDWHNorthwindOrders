@@ -8,14 +8,21 @@ namespace LoadDWHNorthwindOrders.Data.Entities.DWHNorthwindOrders
     public class DimEmployees
     {
         [Key]
-        public int EmployeeKey { get; set; } 
-        public int EmployeeID { get; set; }  
-        public string? LastName { get; set; }
-        public string? FirstName { get; set; }
-        public string? Title { get; set; }
-        public string? TitleOfCourtesy { get; set; }
-        public DateTime? BirthDate { get; set; }
-        public DateTime? HireDate { get; set; }
-        public int? TerritoryKey { get; set; } 
+        public int EmployeeKey { get; set; }
+
+        [Required]
+        public int EmployeeID { get; set; }
+
+        [Required, MaxLength(20)]
+        public string LastName { get; set; }
+
+        [Required, MaxLength(10)]
+        public string FirstName { get; set; }
+
+        [MaxLength(30)]
+        public string Title { get; set; }
+
+        [MaxLength(25)]
+        public string TitleOfCourtesy { get; set; }
     }
 }

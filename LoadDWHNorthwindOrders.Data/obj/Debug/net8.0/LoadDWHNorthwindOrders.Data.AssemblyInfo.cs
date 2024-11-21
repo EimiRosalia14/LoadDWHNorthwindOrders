@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("LoadDWHNorthwindOrders.Data")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+2e192c290fcc977210d9254c73876d29bb47cdef")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+85115e4986d98f7c0e363caa64ddb605aaa51d58")]
 [assembly: System.Reflection.AssemblyProductAttribute("LoadDWHNorthwindOrders.Data")]
 [assembly: System.Reflection.AssemblyTitleAttribute("LoadDWHNorthwindOrders.Data")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

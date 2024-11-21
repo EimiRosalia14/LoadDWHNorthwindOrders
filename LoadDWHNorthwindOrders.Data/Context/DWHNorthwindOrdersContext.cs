@@ -17,6 +17,50 @@ namespace LoadDWHNorthwindOrders.Data.Context
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            // Configuración de DimCustomers
+            modelBuilder.Entity<DimCustomers>()
+                .Property(c => c.CustomerID)
+                .HasMaxLength(5)
+                .IsFixedLength();
+
+            modelBuilder.Entity<DimCustomers>()
+                .Property(c => c.CompanyName)
+                .HasMaxLength(40)
+                .IsRequired();
+
+            // Configuración de DimProducts
+            modelBuilder.Entity<DimProducts>()
+                .Property(p => p.ProductName)
+                .HasMaxLength(40)
+                .IsRequired();
+
+            // Configuración de DimEmployees
+            modelBuilder.Entity<DimEmployees>()
+                .Property(e => e.LastName)
+                .HasMaxLength(20)
+                .IsRequired();
+
+            modelBuilder.Entity<DimEmployees>()
+                .Property(e => e.FirstName)
+                .HasMaxLength(10)
+                .IsRequired();
+
+            // Configuración de DimShippers
+            modelBuilder.Entity<DimShippers>()
+                .Property(s => s.CompanyName)
+                .HasMaxLength(40)
+                .IsRequired();
+
+            modelBuilder.Entity<DimShippers>()
+                .Property(s => s.Phone)
+                .HasMaxLength(24);
+
+            // Configuración de DimCategories
+            modelBuilder.Entity<DimCategories>()
+                .Property(c => c.CategoryName)
+                .HasMaxLength(40)
+                .IsRequired();
+
             base.OnModelCreating(modelBuilder);
         }
     }

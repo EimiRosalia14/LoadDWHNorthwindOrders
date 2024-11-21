@@ -17,6 +17,29 @@ namespace LoadDWHNorthwindOrders.Data.Context
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            // Configuración de la tabla Categories
+            modelBuilder.Entity<Categories>()
+                .HasKey(c => c.CategoryID);
+
+            modelBuilder.Entity<Categories>()
+                .Ignore(c => c.Picture); // Ignorar la columna Picture si no se usa
+
+            // Configuración de la tabla Customers
+            modelBuilder.Entity<Customers>()
+                .Property(c => c.CustomerID)
+                .HasMaxLength(5)
+                .IsFixedLength();
+
+            modelBuilder.Entity<Customers>()
+                .Property(c => c.CompanyName)
+                .HasMaxLength(40)
+                .IsRequired();
+
+            // Configuración de la tabla Products
+            modelBuilder.Entity<Products>()
+                .Property(p => p.UnitPrice)
+                .HasColumnType("decimal(18,2)");
+
             base.OnModelCreating(modelBuilder);
         }
     }
