@@ -1,14 +1,30 @@
+using LoadDWHNorthwindOrders.Data.Context;
+using LoadDWHNorthwindOrders.Data.Interfaces;
+using LoadDWHNorthwindOrders.Data.Services;
+using Microsoft.EntityFrameworkCore;
+
 namespace LoadDWHNorthwindOrders.WorkerService
 {
     public class Program
     {
-        public static void Main(string[] args)
+        private static void Main(string[] args)
         {
-            var builder = Host.CreateApplicationBuilder(args);
-            builder.Services.AddHostedService<Worker>();
-
-            var host = builder.Build();
-            host.Run();
+            CreateHostBuilder(args).Build().Run();
         }
+
+        public static IHostBuilder CreateHostBuilder(string[] args) =>
+            Host.CreateDefaultBuilder(args)
+                .ConfigureServices((hostContext, services) =>
+                {
+                    services.AddDbContextPool<NorthwindContext>(options =>
+                        options.UseSqlServer(hostContext.Configuration.GetConnectionString("DbNorthwind")));
+
+                    services.AddDbContextPool<DWHNorthwindOrdersContext>(options =>
+                        options.UseSqlServer(hostContext.Configuration.GetConnectionString("DbDWHNorthwindOrders")));
+
+                    services.AddScoped<IDataServiceDWHNorthwind, DataServiceDWHNorthwind>();
+
+                    services.AddHostedService<Worker>();
+                });
     }
 }
