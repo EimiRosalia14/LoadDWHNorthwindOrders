@@ -1,16 +1,21 @@
-﻿
+﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+
 namespace LoadDWHNorthwindOrders.Data.Entities.DWHNorthwindOrders
 {
+    [Table("DimCustomers")]
     public class DimCustomers
     {
-        public string CustomerID { get; set; } 
-        public string CompanyName { get; set; } 
-        public string ContactName { get; set; } 
-        public string ContactTitle { get; set; } 
-        public string Address { get; set; } 
-        public string City { get; set; } 
-        public string Region { get; set; } 
-        public string PostalCode { get; set; } 
-        public string Country { get; set; }
+        [Key]
+        public int CustomerKey { get; set; }
+        public string? CustomerID { get; set; } 
+        public string? CompanyName { get; set; }
+        public string? ContactName { get; set; }
+        public string? ContactTitle { get; set; }
+        public string? Address { get; set; }
+        public string? City { get; set; }
+        public string? Region { get; set; }
+        public string? PostalCode { get; set; }
+        public string? Country { get; set; }
     }
 }
