@@ -29,6 +29,9 @@ namespace LoadDWHNorthwindOrders.Data.Services
                 await LoadDimEmployeesAsync();
                 await LoadDimShippersAsync();
 
+                await LoadFactOrders();
+                await LoadFactClienteAtendido();
+
                 result.Success = true;
                 result.Message = "Carga de Data Warehouse completada exitosamente.";
             }
@@ -40,6 +43,7 @@ namespace LoadDWHNorthwindOrders.Data.Services
 
             return result;
         }
+
 
         private async Task LoadDimProductsAsync()
         {
@@ -168,6 +172,37 @@ namespace LoadDWHNorthwindOrders.Data.Services
             catch (Exception ex)
             {
                 throw new Exception("Error al cargar la dimensión de transportistas: " + ex.Message);
+            }
+        }
+
+
+        private async Task LoadFactOrders()
+        {
+            OperationResult result = new OperationResult();
+
+            try
+            {
+                var orders = await _northwindContext.VwOrders.AsNoTracking().ToListAsync();
+            }
+            catch (Exception ex)
+            {
+                result.Success = false;
+                result.Message = ("Error al cargar el fact de orders: " + ex.Message);
+            }
+        }
+
+        private async Task LoadFactClienteAtendido()
+        {
+            OperationResult result = new OperationResult();
+
+            try
+            {
+                var clienteAtendido = await _northwindContext.VwClienteAtendidos.AsNoTracking().ToListAsync();
+            }
+            catch (Exception ex)
+            {
+                result.Success = false;
+                result.Message = ("Error al cargar el fact de clientes atendidos: " + ex.Message);
             }
         }
     }

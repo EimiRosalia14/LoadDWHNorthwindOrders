@@ -17,10 +17,14 @@ namespace LoadDWHNorthwindOrders.WorkerService
                 .ConfigureServices((hostContext, services) =>
                 {
                     services.AddDbContextPool<NorthwindContext>(options =>
-                        options.UseSqlServer(hostContext.Configuration.GetConnectionString("DbNorthwind")));
+                        options.UseSqlServer(hostContext.Configuration.GetConnectionString("DbNorthwind"), 
+                        sqlOptions => sqlOptions.CommandTimeout(300)
+                    ));
 
                     services.AddDbContextPool<DWHNorthwindOrdersContext>(options =>
-                        options.UseSqlServer(hostContext.Configuration.GetConnectionString("DbDWHNorthwindOrders")));
+                        options.UseSqlServer(hostContext.Configuration.GetConnectionString("DbDWHNorthwindOrders"),
+                        sqlOptions => sqlOptions.CommandTimeout(300)
+                    ));
 
                     services.AddScoped<IDataServiceDWHNorthwind, DataServiceDWHNorthwind>();
 
