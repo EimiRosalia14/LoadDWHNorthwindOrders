@@ -14,9 +14,9 @@ namespace LoadDWHNorthwindOrders.Data.Entities.DWHNorthwindOrders
         public int ProductID { get; set; }
 
         [Required, MaxLength(40)]
-        public string ProductName { get; set; }
+        public string? ProductName { get; set; }
 
-        public int? CategoryID { get; set; } // Relación opcional
+        public int? CategoryID { get; set; } 
     }
 
 }

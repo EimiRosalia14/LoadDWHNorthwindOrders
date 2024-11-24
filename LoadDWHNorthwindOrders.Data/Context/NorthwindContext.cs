@@ -24,7 +24,7 @@ namespace LoadDWHNorthwindOrders.Data.Context
                 .HasKey(c => c.CategoryID);
 
             modelBuilder.Entity<Categories>()
-                .Ignore(c => c.Picture); // Ignorar la columna Picture
+                .Ignore(c => c.Picture); 
 
             // Configuración de la tabla Customers
             modelBuilder.Entity<Customers>()
@@ -54,6 +54,7 @@ namespace LoadDWHNorthwindOrders.Data.Context
                     .HasMaxLength(31);
             });
 
+            // Configuración de las vistas (Capa models)
             modelBuilder.Entity<VwOrder>(entity =>
             {
                 entity

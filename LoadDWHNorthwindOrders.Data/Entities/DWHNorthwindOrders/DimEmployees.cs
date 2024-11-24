@@ -14,15 +14,15 @@ namespace LoadDWHNorthwindOrders.Data.Entities.DWHNorthwindOrders
         public int EmployeeID { get; set; }
 
         [Required, MaxLength(20)]
-        public string LastName { get; set; }
+        public string? LastName { get; set; }
 
         [Required, MaxLength(10)]
-        public string FirstName { get; set; }
+        public string? FirstName { get; set; }
 
         [MaxLength(30)]
-        public string Title { get; set; }
+        public string? Title { get; set; }
 
         [MaxLength(25)]
-        public string TitleOfCourtesy { get; set; }
+        public string? TitleOfCourtesy { get; set; }
     }
 }

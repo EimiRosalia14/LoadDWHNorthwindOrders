@@ -9,9 +9,9 @@ namespace LoadDWHNorthwindOrders.Data.Entities.Northwind
         public int ShipperID { get; set; }
 
         [MaxLength(40)]
-        public string CompanyName { get; set; }
+        public string? CompanyName { get; set; }
 
         [MaxLength(24)]
-        public string Phone { get; set; }
+        public string? Phone { get; set; }
     }
 }

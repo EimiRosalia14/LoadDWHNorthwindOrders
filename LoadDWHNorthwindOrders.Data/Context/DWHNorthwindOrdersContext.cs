@@ -14,6 +14,8 @@ namespace LoadDWHNorthwindOrders.Data.Context
         public DbSet<DimEmployees> DimEmployees { get; set; }
         public DbSet<DimProducts> DimProducts { get; set; }
         public DbSet<DimShippers> DimShippers { get; set; }
+        public DbSet<FactClienteAtendido> FactClienteAtendidos { get; set; }
+        public DbSet<FactOrder> FactOrders { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

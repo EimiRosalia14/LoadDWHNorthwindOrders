@@ -23,12 +23,14 @@ namespace LoadDWHNorthwindOrders.Data.Services
 
             try
             {
-                await LoadDimProductsAsync();
+                await _dwhContext.FactOrders.ExecuteDeleteAsync();
+                await _dwhContext.FactClienteAtendidos.ExecuteDeleteAsync();
+
                 await LoadDimCategoriesAsync();
+                await LoadDimProductsAsync();
                 await LoadDimCustomersAsync();
                 await LoadDimEmployeesAsync();
                 await LoadDimShippersAsync();
-
                 await LoadFactOrders();
                 await LoadFactClienteAtendido();
 
@@ -45,37 +47,19 @@ namespace LoadDWHNorthwindOrders.Data.Services
         }
 
 
-        private async Task LoadDimProductsAsync()
-        {
-            try
-            {
-                await _dwhContext.Database.ExecuteSqlRawAsync("EXEC sp_ClearDimProducts");
-
-                var products = await _northwindContext.Products
-                    .AsNoTracking()
-                    .Select(p => new DimProducts
-                    {
-                        ProductID = p.ProductID,
-                        ProductName = p.ProductName ?? "Sin nombre",
-                        CategoryID = p.CategoryID
-                    })
-                    .ToListAsync();
-
-                await _dwhContext.DimProducts.AddRangeAsync(products);
-                await _dwhContext.SaveChangesAsync();
-            }
-            catch (Exception ex)
-            {
-                throw new Exception("Error al cargar la dimensión de productos: " + ex.Message);
-            }
-        }
-
         private async Task LoadDimCategoriesAsync()
         {
             try
             {
-                await _dwhContext.Database.ExecuteSqlRawAsync("EXEC sp_ClearDimCategories");
+                // Limpiamos DimProducts (tabla dependiente) primero
+                await _dwhContext.Database.ExecuteSqlRawAsync("ALTER TABLE DimProducts NOCHECK CONSTRAINT ALL");
+                await _dwhContext.DimProducts.ExecuteDeleteAsync();
+                await _dwhContext.Database.ExecuteSqlRawAsync("ALTER TABLE DimProducts CHECK CONSTRAINT ALL");
 
+                // Limpiamos DimCategories
+                await _dwhContext.DimCategories.ExecuteDeleteAsync();
+
+                // Cargamos datos de DimCategories
                 var categories = await _northwindContext.Categories
                     .AsNoTracking()
                     .Select(c => new DimCategories
@@ -91,7 +75,40 @@ namespace LoadDWHNorthwindOrders.Data.Services
             }
             catch (Exception ex)
             {
-                throw new Exception("Error al cargar la dimensión de categorías: " + ex.Message);
+                throw new Exception("Error al cargar DimCategories: " + ex.Message);
+            }
+        }
+
+        private async Task LoadDimProductsAsync()
+        {
+            try
+            {
+                // Asegurarnos de que DimCategories ya esté cargada antes de DimProducts
+                if (!await _dwhContext.DimCategories.AnyAsync())
+                {
+                    throw new Exception("No se pueden cargar productos sin categorías. Ejecute primero LoadDimCategoriesAsync.");
+                }
+
+                // Limpiamos DimProducts
+                await _dwhContext.DimProducts.ExecuteDeleteAsync();
+
+                // Cargamos datos de DimProducts
+                var products = await _northwindContext.Products
+                    .AsNoTracking()
+                    .Select(p => new DimProducts
+                    {
+                        ProductID = p.ProductID,
+                        ProductName = p.ProductName ?? "Sin nombre",
+                        CategoryID = p.CategoryID
+                    })
+                    .ToListAsync();
+
+                await _dwhContext.DimProducts.AddRangeAsync(products);
+                await _dwhContext.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Error al cargar DimProducts: " + ex.Message);
             }
         }
 
@@ -99,13 +116,13 @@ namespace LoadDWHNorthwindOrders.Data.Services
         {
             try
             {
-                await _dwhContext.Database.ExecuteSqlRawAsync("EXEC sp_ClearDimCustomers");
+                await _dwhContext.DimCustomers.ExecuteDeleteAsync();
 
                 var customers = await _northwindContext.Customers
                     .AsNoTracking()
                     .Select(c => new DimCustomers
                     {
-                        CustomerID = (c.CustomerID ?? string.Empty).Trim(),
+                        CustomerID = c.CustomerID.Trim(),
                         CompanyName = c.CompanyName ?? "Sin nombre",
                         ContactName = c.ContactName ?? "No disponible",
                         ContactTitle = c.ContactTitle ?? "No disponible",
@@ -119,7 +136,7 @@ namespace LoadDWHNorthwindOrders.Data.Services
             }
             catch (Exception ex)
             {
-                throw new Exception("Error al cargar la dimensión de clientes: " + ex.Message);
+                throw new Exception("Error al cargar DimCustomers: " + ex.Message);
             }
         }
 
@@ -127,7 +144,7 @@ namespace LoadDWHNorthwindOrders.Data.Services
         {
             try
             {
-                await _dwhContext.Database.ExecuteSqlRawAsync("EXEC sp_ClearDimEmployees");
+                await _dwhContext.DimEmployees.ExecuteDeleteAsync();
 
                 var employees = await _northwindContext.Employees
                     .AsNoTracking()
@@ -146,7 +163,7 @@ namespace LoadDWHNorthwindOrders.Data.Services
             }
             catch (Exception ex)
             {
-                throw new Exception("Error al cargar la dimensión de empleados: " + ex.Message);
+                throw new Exception("Error al cargar DimEmployees: " + ex.Message);
             }
         }
 
@@ -154,7 +171,7 @@ namespace LoadDWHNorthwindOrders.Data.Services
         {
             try
             {
-                await _dwhContext.Database.ExecuteSqlRawAsync("EXEC sp_ClearDimShippers");
+                await _dwhContext.DimShippers.ExecuteDeleteAsync();
 
                 var shippers = await _northwindContext.Shippers
                     .AsNoTracking()
@@ -171,38 +188,100 @@ namespace LoadDWHNorthwindOrders.Data.Services
             }
             catch (Exception ex)
             {
-                throw new Exception("Error al cargar la dimensión de transportistas: " + ex.Message);
+                throw new Exception("Error al cargar DimShippers: " + ex.Message);
             }
         }
 
-
         private async Task LoadFactOrders()
         {
-            OperationResult result = new OperationResult();
-
             try
             {
                 var orders = await _northwindContext.VwOrders.AsNoTracking().ToListAsync();
+
+                var existingOrderIds = await _dwhContext.FactOrders.Select(f => f.OrderId).ToArrayAsync();
+                if (existingOrderIds.Any())
+                {
+                    await _dwhContext.FactOrders.Where(f => existingOrderIds.Contains(f.OrderId))
+                                                .ExecuteDeleteAsync();
+                }
+
+                var customers = await _dwhContext.DimCustomers
+                                                 .AsNoTracking()
+                                                 .ToDictionaryAsync(c => c.CustomerID, c => c.CustomerKey);
+
+                var employees = await _dwhContext.DimEmployees
+                                                 .AsNoTracking()
+                                                 .ToDictionaryAsync(e => e.EmployeeID, e => e.EmployeeKey);
+
+                var shippers = await _dwhContext.DimShippers
+                                                .AsNoTracking()
+                                                .ToDictionaryAsync(s => s.ShipperID, s => s.ShipperKey);
+
+                var factOrders = new List<FactOrder>();
+
+                foreach (var order in orders)
+                {
+                    var customerKey = customers.TryGetValue(order.ClienteId ?? string.Empty, out var cKey) ? cKey : 0;
+                    var employeeKey = employees.TryGetValue(order.EmpleadoId, out var eKey) ? eKey : 0;
+                    var shipperKey = shippers.TryGetValue(order.TransportistaId, out var sKey) ? sKey : 0;
+
+                    FactOrder factOrder = new FactOrder
+                    {
+                        OrderId = order.OrdenId,
+                        CustomerKey = customerKey,
+                        EmployeeKey = employeeKey,
+                        ShipVia = shipperKey,
+                        Año = order.Año ?? 0,
+                        Mes = order.Mes ?? 0,
+                        TotalVenta = (decimal?)order.TotalVenta ?? 0, 
+                        CantidadProductos = order.CantidadProductos ?? 0
+                    };
+
+                    factOrders.Add(factOrder);
+                }
+
+                if (factOrders.Any())
+                {
+                    await _dwhContext.FactOrders.AddRangeAsync(factOrders);
+                    await _dwhContext.SaveChangesAsync();
+                }
             }
             catch (Exception ex)
             {
-                result.Success = false;
-                result.Message = ("Error al cargar el fact de orders: " + ex.Message);
+                throw new Exception("Error al cargar el FactOrders: " + ex.Message);
             }
         }
 
         private async Task LoadFactClienteAtendido()
         {
-            OperationResult result = new OperationResult();
-
             try
             {
-                var clienteAtendido = await _northwindContext.VwClienteAtendidos.AsNoTracking().ToListAsync();
+                var clienteAtendidos = await _northwindContext.VwClienteAtendidos.AsNoTracking().ToListAsync();
+
+                await _dwhContext.FactClienteAtendidos.ExecuteDeleteAsync();
+
+                var employeeKeys = await _dwhContext.DimEmployees
+                                                    .AsNoTracking()
+                                                    .ToDictionaryAsync(e => e.EmployeeID, e => e.EmployeeKey);
+
+                var factClientes = clienteAtendidos.Select(customer =>
+                {
+                    var employeeKey = employeeKeys.ContainsKey(customer.EmployeeId) ? employeeKeys[customer.EmployeeId] : 0;
+
+                    return new FactClienteAtendido
+                    {
+                        EmployeeKey = employeeKey,
+                        NumeroDeClientes = customer.NumeroDeClientes ?? 0
+                    };
+                }).ToList();
+
+                await _dwhContext.FactClienteAtendidos.AddRangeAsync(factClientes);
+
+                await _dwhContext.SaveChangesAsync();
             }
             catch (Exception ex)
             {
-                result.Success = false;
-                result.Message = ("Error al cargar el fact de clientes atendidos: " + ex.Message);
+                throw new Exception($"Error al cargar el FactClienteAtendido: {ex.Message}");
             }
         }
     }
