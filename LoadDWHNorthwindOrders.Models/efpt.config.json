@@ -8,7 +8,7 @@
    "OutputContextPath": null,
    "OutputPath": "ModelsOrders",
    "PreserveCasingWithRegex": true,
-   "ProjectRootNamespace": "LoadDWHNorthwindOrders.Models.DwhNorthwindOrders",
+   "ProjectRootNamespace": "LoadDWHNorthwindOrders.Models.DWHNorthwindOrders",
    "Schemas": null,
    "SelectedHandlebarsLanguage": 2,
    "SelectedToBeGenerated": 0,

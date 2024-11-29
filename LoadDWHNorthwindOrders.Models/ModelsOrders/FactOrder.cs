@@ -3,7 +3,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace LoadDWHNorthwindOrders.Models.DwhNorthwindOrders.ModelsOrders;
+namespace LoadDWHNorthwindOrders.Models.DWHNorthwindOrders.ModelsOrders;
 
 public partial class FactOrder
 {
@@ -14,6 +14,8 @@ public partial class FactOrder
     public int CustomerKey { get; set; }
 
     public int EmployeeKey { get; set; }
+
+    public string Country { get; set; }
 
     public int? ShipVia { get; set; }
 

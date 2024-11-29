@@ -3,7 +3,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace LoadDWHNorthwindOrders.Models.DwhNorthwindOrders.ModelsOrders;
+namespace LoadDWHNorthwindOrders.Models.DWHNorthwindOrders.ModelsOrders;
 
 public partial class FactClienteAtendido
 {

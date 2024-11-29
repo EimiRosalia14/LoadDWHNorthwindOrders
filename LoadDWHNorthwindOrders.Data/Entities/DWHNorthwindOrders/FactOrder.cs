@@ -15,6 +15,8 @@ namespace LoadDWHNorthwindOrders.Data.Entities.DWHNorthwindOrders
 
         public int EmployeeKey { get; set; }
 
+        public string? Country { get; set; }
+
         public int? ShipVia { get; set; }
 
         public int Año { get; set; }

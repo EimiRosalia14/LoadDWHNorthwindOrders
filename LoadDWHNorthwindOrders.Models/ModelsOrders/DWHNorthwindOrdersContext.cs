@@ -4,7 +4,7 @@ using System;
 using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
 
-namespace LoadDWHNorthwindOrders.Models.DwhNorthwindOrders.ModelsOrders;
+namespace LoadDWHNorthwindOrders.Models.DWHNorthwindOrders.ModelsOrders;
 
 public partial class DWHNorthwindOrdersContext : DbContext
 {
@@ -30,12 +30,11 @@ public partial class DWHNorthwindOrdersContext : DbContext
 
         modelBuilder.Entity<FactOrder>(entity =>
         {
-            entity.HasKey(e => e.OrderKey).HasName("PK__FactOrde__E6D597D0BE1DA372");
+            entity.HasKey(e => e.OrderKey).HasName("PK__FactOrde__E6D597D0AB7675E2");
 
-            entity.HasIndex(e => new { e.Año, e.Mes, e.CantidadProductos }, "IX_FactOrders_YearMonthCantidad");
+            entity.HasIndex(e => e.OrderId, "UQ__FactOrde__C3905BAE8D78808D").IsUnique();
 
-            entity.HasIndex(e => e.OrderId, "UQ__FactOrde__C3905BAE219D1D8D").IsUnique();
-
+            entity.Property(e => e.Country).HasMaxLength(15);
             entity.Property(e => e.OrderId).HasColumnName("OrderID");
             entity.Property(e => e.TotalVenta).HasColumnType("decimal(18, 2)");
         });

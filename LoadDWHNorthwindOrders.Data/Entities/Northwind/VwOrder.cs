@@ -9,6 +9,8 @@ namespace LoadDWHNorthwindOrders.Data.Entities.Northwind
 
         public string? ClienteNombre { get; set; }
 
+        public string? Country { get; set; }
+
         public int EmpleadoId { get; set; }
 
         public string? EmpleadoNombre { get; set; }

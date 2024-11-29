@@ -63,6 +63,12 @@ namespace LoadDWHNorthwindOrders.Data.Context
                 .HasMaxLength(40)
                 .IsRequired();
 
+            modelBuilder.Entity<FactOrder>()
+                .Property(f => f.Country)
+                .HasMaxLength(15)
+                .HasColumnName("Country"); 
+
+
             base.OnModelCreating(modelBuilder);
         }
     }

@@ -42,6 +42,8 @@ namespace LoadDWHNorthwindOrders.Data.Context
                 .Property(p => p.UnitPrice)
                 .HasColumnType("decimal(18,2)");
 
+
+            // Configuración de las vistas (Capa models)
             modelBuilder.Entity<VwClienteAtendido>(entity =>
             {
                 entity
@@ -54,7 +56,6 @@ namespace LoadDWHNorthwindOrders.Data.Context
                     .HasMaxLength(31);
             });
 
-            // Configuración de las vistas (Capa models)
             modelBuilder.Entity<VwOrder>(entity =>
             {
                 entity
@@ -69,6 +70,8 @@ namespace LoadDWHNorthwindOrders.Data.Context
                 entity.Property(e => e.ClienteNombre)
                     .IsRequired()
                     .HasMaxLength(40);
+                entity.Property(e => e.Country)
+                    .HasMaxLength(15); 
                 entity.Property(e => e.EmpleadoId).HasColumnName("EmpleadoID");
                 entity.Property(e => e.EmpleadoNombre)
                     .IsRequired()

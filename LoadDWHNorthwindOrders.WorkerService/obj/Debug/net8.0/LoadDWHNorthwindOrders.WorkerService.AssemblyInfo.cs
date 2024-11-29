@@ -15,7 +15,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("LoadDWHNorthwindOrders.WorkerService")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+6908ec596030690349f9df0ef767915ab82ffb9c")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+13ca2d6af26455f528bc768d3c483e515efb298f")]
 [assembly: System.Reflection.AssemblyProductAttribute("LoadDWHNorthwindOrders.WorkerService")]
 [assembly: System.Reflection.AssemblyTitleAttribute("LoadDWHNorthwindOrders.WorkerService")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

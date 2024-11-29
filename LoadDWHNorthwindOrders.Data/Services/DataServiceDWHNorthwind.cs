@@ -198,12 +198,7 @@ namespace LoadDWHNorthwindOrders.Data.Services
             {
                 var orders = await _northwindContext.VwOrders.AsNoTracking().ToListAsync();
 
-                var existingOrderIds = await _dwhContext.FactOrders.Select(f => f.OrderId).ToArrayAsync();
-                if (existingOrderIds.Any())
-                {
-                    await _dwhContext.FactOrders.Where(f => existingOrderIds.Contains(f.OrderId))
-                                                .ExecuteDeleteAsync();
-                }
+                await _dwhContext.FactOrders.ExecuteDeleteAsync();
 
                 var customers = await _dwhContext.DimCustomers
                                                  .AsNoTracking()
@@ -233,8 +228,9 @@ namespace LoadDWHNorthwindOrders.Data.Services
                         ShipVia = shipperKey,
                         Año = order.Año ?? 0,
                         Mes = order.Mes ?? 0,
-                        TotalVenta = (decimal?)order.TotalVenta ?? 0, 
-                        CantidadProductos = order.CantidadProductos ?? 0
+                        TotalVenta = (decimal?)order.TotalVenta ?? 0,
+                        CantidadProductos = order.CantidadProductos ?? 0,
+                        Country = order.Country 
                     };
 
                     factOrders.Add(factOrder);
